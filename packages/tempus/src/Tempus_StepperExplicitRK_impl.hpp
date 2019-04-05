@@ -172,7 +172,6 @@ void StepperExplicitRK<Scalar>::setTableau(std::string stepperType)
     std::logic_error,
        "Error - StepperExplicitRK received an implicit Butcher Tableau!\n"
     << "  Stepper Type = " << stepperType << "\n");
-  description_ = ERK_ButcherTableau_->description();
 }
 
 template<class Scalar>
@@ -196,9 +195,18 @@ void StepperExplicitRK<Scalar>::setTableau(
     std::logic_error,
        "Error - StepperExplicitRK received an implicit Butcher Tableau!\n"
     << "  Stepper Type = " << stepperType << "\n");
-  description_ = ERK_ButcherTableau_->description();
 }
 
+template<class Scalar>
+void StepperExplicitRK<Scalar>::setTableau(
+  Teuchos::RCP<const RKButcherTableau<Scalar> > ERK_ButcherTableau)
+{
+  ERK_ButcherTableau_ = ERK_ButcherTableau;
+
+  TEUCHOS_TEST_FOR_EXCEPTION(ERK_ButcherTableau_->isImplicit() == true,
+    std::logic_error,
+       "Error - StepperExplicitRK received an implicit Butcher Tableau!\n");
+}
 
 template<class Scalar>
 void StepperExplicitRK<Scalar>::setObserver(
@@ -410,7 +418,7 @@ getDefaultStepperState()
 template<class Scalar>
 std::string StepperExplicitRK<Scalar>::description() const
 {
-  return(description_);
+  return(ERK_ButcherTableau_->description());
 }
 
 
